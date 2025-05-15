@@ -1,0 +1,62 @@
+{
+    "sourceFile": "单例模式.md",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 11,
+            "patches": [
+                {
+                    "date": 1745112396394,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1745112408137,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,1 +1,1 @@\n-# **new 方法**\n+### **new 方法**\n"
+                },
+                {
+                    "date": 1745113191125,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,1 +1,35 @@\n ### **new 方法**\n+\n+`function Person(name) {\n+    this.name = name;\n+    this.sayName = function() {\n+        console.log(this.name);\n+    }\n+}\n+const person = new Person('John');\n+person.sayName();`\n+new 方法指定 function 的 return 为{},并将 function 的 this 指向这个对象，执行完 function 后返回这个对象。\n+`class Person {\n+    constructor(name) {\n+        this.name = name;\n+    }\n+    sayName() {\n+        console.log(this.name);\n+    }\n+}\n+const person = new Person('John');\n+person.sayName();`\n+new 方法创建一个{},将 constructor 的 this 指向这个对象，将 sayName 的挂载对象作为原型对象\n+\n+#### **闭包 --利用垃圾回收机制的判断标准实现变量缓存**\n+\n+`\n+(\n+function() {\n+const person = null\n+\n+        return new Person('John');\n+    }\n+\n+)()\n+`\n"
+                },
+                {
+                    "date": 1745113275964,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,10 +26,17 @@\n `\n (\n function() {\n const person = null\n+function Person() {\n+this.name = 'John';\n+this.age = 20;\n+}\n+person.sayName = function() {\n+console.log('John');\n+}\n \n-        return new Person('John');\n+        return\n     }\n \n )()\n `\n"
+                },
+                {
+                    "date": 1745113343554,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,35 @@\n+### **new 方法**\n+\n+`function Person(name) {\n+    this.name = name;\n+    this.sayName = function() {\n+        console.log(this.name);\n+    }\n+}\n+const person = new Person('John');\n+person.sayName();`\n+new 方法指定 function 的 return 为{},并将 function 的 this 指向这个对象，执行完 function 后返回这个对象。\n+`class Person {\n+    constructor(name) {\n+        this.name = name;\n+    }\n+    sayName() {\n+        console.log(this.name);\n+    }\n+}\n+const person = new Person('John');\n+person.sayName();`\n+new 方法创建一个{},将 constructor 的 this 指向这个对象，将 sayName 的挂载对象作为原型对象\n+\n+#### **闭包 --利用垃圾回收机制的判断标准实现变量缓存**\n+\n+`(\n+    function() {\n+        const person = null\n+        person.name = 'John'\n+        person.sayName = function() {\n+            console.log(person.name)\n+        }\n+        return person\n+    }\n+)()`\n"
+                },
+                {
+                    "date": 1745113365964,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -31,5 +31,6 @@\n             console.log(person.name)\n         }\n         return person\n     }\n-)()`\n+)()\n+`\n"
+                },
+                {
+                    "date": 1745113532960,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,57 +22,21 @@\n new 方法创建一个{},将 constructor 的 this 指向这个对象，将 sayName 的挂载对象作为原型对象\n \n #### **闭包 --利用垃圾回收机制的判断标准实现变量缓存**\n \n-`(\n+`\n+const aPerson = (\n+const person = null\n+\n     function() {\n-        const person = null\n         person.name = 'John'\n         person.sayName = function() {\n             console.log(person.name)\n         }\n         return person\n     }\n-)()\n-`\n-### **new 方法**\n \n-`function Person(name) {\n-    this.name = name;\n-    this.sayName = function() {\n-        console.log(this.name);\n-    }\n-}\n-const person = new Person('John');\n-person.sayName();`\n-new 方法指定 function 的 return 为{},并将 function 的 this 指向这个对象，执行完 function 后返回这个对象。\n-`class Person {\n-    constructor(name) {\n-        this.name = name;\n-    }\n-    sayName() {\n-        console.log(this.name);\n-    }\n-}\n-const person = new Person('John');\n-person.sayName();`\n-new 方法创建一个{},将 constructor 的 this 指向这个对象，将 sayName 的挂载对象作为原型对象\n-\n-#### **闭包 --利用垃圾回收机制的判断标准实现变量缓存**\n-\n-`\n-(\n-function() {\n-const person = null\n-function Person() {\n-this.name = 'John';\n-this.age = 20;\n-}\n-person.sayName = function() {\n-console.log('John');\n-}\n-\n-        return\n-    }\n-\n )()\n+const A = aPerson()\n+const B = aPerson()\n+A.sayName()\n `\n"
+                },
+                {
+                    "date": 1745113575720,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,21 +22,18 @@\n new 方法创建一个{},将 constructor 的 this 指向这个对象，将 sayName 的挂载对象作为原型对象\n \n #### **闭包 --利用垃圾回收机制的判断标准实现变量缓存**\n \n-`\n-const aPerson = (\n-const person = null\n-\n+`const aPerson = (\n     function() {\n+        const person = null\n+        if (!person) person = {}\n         person.name = 'John'\n         person.sayName = function() {\n             console.log(person.name)\n         }\n         return person\n     }\n-\n )()\n const A = aPerson()\n const B = aPerson()\n-A.sayName()\n-`\n+A.sayName()`\n"
+                },
+                {
+                    "date": 1745113726134,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,14 +25,15 @@\n \n `const aPerson = (\n     function() {\n         const person = null\n-        if (!person) person = {}\n-        person.name = 'John'\n-        person.sayName = function() {\n-            console.log(person.name)\n+        const F = function() {\n+            if (person) {\n+            this.name = 'John'\n+            this.sayName = function() {\n+                console.log(this.name)\n+            }\n         }\n-        return person\n     }\n )()\n const A = aPerson()\n const B = aPerson()\n"
+                },
+                {
+                    "date": 1745113769758,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,9 +26,10 @@\n `const aPerson = (\n     function() {\n         const person = null\n         const F = function() {\n-            if (person) {\n+            if (person) return person\n+            person = this\n             this.name = 'John'\n             this.sayName = function() {\n                 console.log(this.name)\n             }\n"
+                },
+                {
+                    "date": 1745113793098,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,8 +32,9 @@\n             this.name = 'John'\n             this.sayName = function() {\n                 console.log(this.name)\n             }\n+            return F\n         }\n     }\n )()\n const A = aPerson()\n"
+                },
+                {
+                    "date": 1745113813543,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -36,7 +36,7 @@\n             return F\n         }\n     }\n )()\n-const A = aPerson()\n-const B = aPerson()\n+const A = new aPerson()\n+const B = new aPerson()\n A.sayName()`\n"
+                }
+            ],
+            "date": 1745112396394,
+            "name": "Commit-0",
+            "content": "# **new 方法**\n"
+        }
+    ]
+}
