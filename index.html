@@ -8,60 +8,6 @@
   </head>
   <body>
     <div></div>
-    <script>
-      let Stack = (function () {
-        let symbol = Symbol();
-        class Stack {
-          constructor() {
-            this[symbol] = []; // 栈队列
-          }
-          push(...rest) {
-            // 入栈
-            this[symbol].push(...rest);
-          }
-          pop() {
-            if (this.size() === 0) return confirm("栈为空");
-            // 出栈（返回并删除）
-            return this[symbol].pop();
-          }
-          peek() {
-            if (this.size() === 0) return confirm("栈为空");
-            // 获得栈顶 最后一个
-            return this[symbol][this.size() - 1];
-          }
-          clear() {
-            // 清空栈
-            this[symbol] = [];
-          }
-          size() {
-            // 栈的大小
-            return this[symbol].length;
-          }
-        }
-        return Stack;
-      })();
-      let ifMacthSign = (function () {
-        let startSign = ["(", "[", "{"],
-          endSign = [")", "]", "}"];
-        return (str) => {
-          let stack = new Stack();
-          for (let i = 0; i < str.length; i++) {
-            if (startSign.includes(str[i])) {
-              stack.push(str[i]); // 入栈左括号
-            }
-            if (endSign.includes(str[i])) {
-              if (startSign.indexOf(stack.pop()) !== endSign.indexOf(str[i])) {
-                // 不匹配删了不重要 匹配本来也要删掉
-                return false;
-              }
-            }
-          }
-          return stack.size() === 0; // 如果栈为空，则说明匹配成功
-        };
-      })();
-      console.log(ifMacthSign("{{{{{{()[]}}}"));
-      console.log(ifMacthSign("{{222}}"));
-      console.log(ifMacthSign("{{2(2})[]2}}"));
-    </script>
+    <script></script>
   </body>
 </html>
