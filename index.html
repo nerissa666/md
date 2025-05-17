@@ -6,8 +6,54 @@
     <title>Document</title>
     <style></style>
   </head>
+  <style></style>
   <body>
     <div></div>
-    <script></script>
+    <script>
+      let Queue = (function () {
+        const symbol = Symbol("queue");
+        console.log(symbol);
+        return class {
+          constructor() {
+            this[symbol] = [];
+          }
+          unshift(...r) {
+            // 前入队
+            this[symbol].unshift(...r);
+          }
+          push(...r) {
+            // 后入队
+            this[symbol].push(...r);
+          }
+          shift() {
+            // 前面出队 返回第一个元素并删除
+            if (this.size() === 0) console.warn("队列为空");
+            return this[symbol].shift();
+          }
+          pop() {
+            if (this.size() === 0) console.warn("队列为空");
+            return this[symbol].pop();
+          }
+          first() {
+            // 返回第一个元素
+            if (this[symbol].size === 0) console.warn("队列为空");
+            return this[symbol][0];
+          }
+          last() {
+            // 返回最后一个元素
+            if (this[symbol].size === 0) console.warn("队列为空");
+            return this[symbol][this[symbol].length - 1];
+          }
+          clear() {
+            // 清空队列
+            this[symbol] = [];
+          }
+          size() {
+            return this[symbol].length;
+          }
+        };
+      })();
+      let q = new Queue();
+    </script>
   </body>
 </html>
