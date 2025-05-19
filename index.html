@@ -10,50 +10,127 @@
   <body>
     <div></div>
     <script>
-      let Queue = (function () {
-        const symbol = Symbol("queue");
-        console.log(symbol);
+      let Linked = (function () {
+        const HEAD = Symbol("HEAD"),
+          FOOT = Symbol("FOOT");
+        class Node {
+          constructor(data) {
+            this.data = data;
+            this.next = null;
+            this.prev = null;
+          }
+          insertBefore(data, lindked) {
+            /**
+             * 如果当前节点是linked的head，他会有什么特点
+             * 他没有prev也就是this.prev === null
+             * 还要把linked的head改编成当前节点
+             */
+            let node = new Node(data);
+            lindked.length++;
+            if (this.prev === null) {
+              // 当前节点是linked的head
+              this.prev = node;
+              lindked.changeHead(node);
+            } else {
+              node.prev = this.prev;
+            }
+            this.prev.next = node;
+            node.next = this;
+            this.prev = node;
+            return node;
+          }
+          insertAfter(data, lindked) {
+            // 不考虑换head的情况 需要考虑换FOOT的情况,什么时候需要换呢，this.next === null
+            let node = new Node(data);
+            lindked.length++;
+            if (this.next === null) {
+              this.next = node;
+              lindked.changeFoot(node);
+            } else {
+              node.next = this.next;
+              this.next.prev = node;
+            }
+            node.prev = this;
+            this.next = node;
+            return node;
+          }
+          remove(linked) {
+            /**
+             * 删除当前节点
+             * 需要做什么 如果他是HEAD 修改next 的 prev 为 null linked的head改为next
+             * 如果他是FOOT，修改prev的next为null linked的foot改为prev
+             * 如果他既是HEAD又是FOOT,那么把HEAD和FOOT都改为null
+             * 正常的话是什么
+             * prev的next改为next，next的prev改为prev
+             * length--
+             * */
+            if (this.prev === null) {
+              // HEAD
+              this.next.prev = null;
+              lindked.changeHead(this.next);
+            } else if (this.next === null) {
+              // FOOT
+              this.prev.next = null;
+              lindked.changeFoot(this.prev);
+            } else {
+              this.prev.next = this.next;
+              this.next.prev = this.prev;
+            }
+            linked.length--;
+          }
+        }
+
         return class {
           constructor() {
-            this[symbol] = [];
+            this[HEAD] = null;
+            this[FOOT] = null;
+            this.length = 0;
           }
-          unshift(...r) {
-            // 前入队
-            this[symbol].unshift(...r);
+          uushift(data) {
+            let node = new Node(data);
+            this.length++;
+            if (this[HEAD] === null) {
+              this[HEAD] = node;
+              this[FOOT] = node;
+              return node;
+            }
+            this[HEAD].prev = node;
+            node.next = this[HEAD];
+            this[HEAD] = node;
+            return node;
           }
-          push(...r) {
-            // 后入队
-            this[symbol].push(...r);
+          push(data) {
+            let node = new Node(data);
+            this.length++;
+            if (this[HEAD] === null) {
+              this[HEAD] = node;
+              this[FOOT] = node;
+              return node;
+            }
+            this[FOOT].next = node;
+            node.prev = this[FOOT];
+            this[FOOT] = node;
+            return node;
           }
-          shift() {
-            // 前面出队 返回第一个元素并删除
-            if (this.size() === 0) console.warn("队列为空");
-            return this[symbol].shift();
+          changeHead(node) {
+            this[HEAD] = node;
           }
-          pop() {
-            if (this.size() === 0) console.warn("队列为空");
-            return this[symbol].pop();
-          }
-          first() {
-            // 返回第一个元素
-            if (this[symbol].size === 0) console.warn("队列为空");
-            return this[symbol][0];
-          }
-          last() {
-            // 返回最后一个元素
-            if (this[symbol].size === 0) console.warn("队列为空");
-            return this[symbol][this[symbol].length - 1];
-          }
-          clear() {
-            // 清空队列
-            this[symbol] = [];
-          }
-          size() {
-            return this[symbol].length;
+          changeFoot(node) {
+            this[FOOT] = node;
           }
         };
       })();
-      let q = new Queue();
+      let lindked = new Linked();
+      // 期望在num1前面插入一个节点,所以要在Node的原型上添加一个方法，该方法可以实现在节点前后插入节点的操作
+      let num1 = lindked.uushift(1, lindked);
+      let num2 = lindked.push(2);
+      num1.insertBefore(0, lindked);
+      num2.insertBefore(1.5, lindked);
+      num2.insertAfter(3, lindked);
+      num1.insertAfter(1.2, lindked);
+      num1.insertBefore(0.9, lindked);
+      num1.remove(lindked);
+      console.log(lindked);
     </script>
   </body>
 </html>
