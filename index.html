@@ -9,46 +9,6 @@
 
   <body>
     <div></div>
-    <script>
-      // DJB
-      function DJBHash(str) {
-        var hash = 5381;
-        var len = str.length,
-          i = 0;
-        while (len--) {
-          hash = (hash << 5) + hash + str.charCodeAt(i++); /* times 33 */
-        }
-        hash &= ~(1 << 31); /* strip the highest bit */
-        return hash;
-      }
-      console.log(DJBHash("adsd"));
-      console.log(DJBHash("asdb"));
-      //JS
-      function JSHash(str) {
-        var hash = 1315423911;
-        for (var i = 0; i < str.length; i++) {
-          hash ^= (hash << 5) + str.charCodeAt(i) + (hash >> 2);
-        }
-        return hash;
-      }
-      console.log(JSHash("adsd"));
-      // //PJW
-      function PJWHash(str) {
-        var BitsInUnsignedInt = 4 * 8;
-        var ThreeQuarters = (BitsInUnsignedInt * 3) / 4;
-        var OneEighth = BitsInUnsignedInt / 8;
-        var HighBits = 0xffffffff << (BitsInUnsignedInt - OneEighth);
-        var hash = 0;
-        var test = 0;
-        for (var i = 0; i < str.length; i++) {
-          hash = (hash << OneEighth) + str.charCodeAt(i);
-          if ((test = hash & HighBits) != 0) {
-            hash = (hash ^ (test >> ThreeQuarters)) & ~HighBits;
-          }
-        }
-        return hash;
-      }
-      console.log(PJWHash("adsd"));
-    </script>
+    <script></script>
   </body>
 </html>
