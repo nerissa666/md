@@ -10,97 +10,45 @@
   <body>
     <div></div>
     <script>
-      let Map = (function () {
-        const MAP = Symbol("map");
-        return class {
-          constructor() {
-            this[MAP] = [];
-          }
-          set(k, v) {
-            if (this[MAP].length === 0) {
-              this[MAP].push({ key: k, value: v });
-              return this;
-            }
-            for (let i = 0, len = this[MAP].length; i < len; i++) {
-              if (k === this[MAP][i].key) {
-                this[MAP][i] = { key: k, value: v };
-                return;
-              }
-            }
-            this[MAP].push({ key: k, value: v });
-          }
-          get(key) {
-            for (let i = 0, len = this[MAP].length; i < len; i++) {
-              if (this[MAP][i].key === key) {
-                return this[MAP][i].value;
-              }
-            }
-          }
-          has(key) {
-            return this[MAP].some((item) => item.key === key);
-          }
-          delete(key) {
-            this[MAP] = this[MAP].filter((item) => item.key !== key);
-          }
-          clear() {
-            this[MAP] = [];
-          }
-          values() {
-            return this[MAP].map((item) => item.value);
-          }
-          keys() {
-            return this[MAP].map((item) => item.key);
-          }
-          entries() {
-            let i = 0,
-              data = this[MAP];
-            return {
-              [Symbol.iterator]() {
-                // 手动实现可迭代对象需要实现这个方法 方法里面返回需要迭代的对象本身
-                return this;
-              },
-              next() {
-                if (i < data.length) {
-                  const entry = data[i++];
-                  return { value: [entry.key, entry.value], done: false };
-                } else {
-                  return { done: true };
-                }
-              },
-            };
-          }
-        };
-      })();
-      let map = new Map();
-      let a = { x: 1, y: 2 };
-      let b = function () {};
-      let c = new Set();
-      map.set("name", "zhangsan");
-      map.set("name", "lisi");
-      map.set("age", 18);
-      map.set("age", 18);
-      map.set(a, "a");
-      map.set(b, new Map());
-      map.set(c, () => {});
-      console.log(map.get("name"));
-      console.log(map.get("age"));
-      console.log(map.get(a));
-      console.log(map.has(b));
-      map.delete("name");
-      map.delete(a);
-      console.log(map.values());
-      console.log(map.keys());
-      // console.log(map.entries());
-      // for (let [key, value] of map.entries()) {
-      //   console.log(key, value, "123");
-      // }
-      let iterator = map.entries();
-      let result = iterator.next();
-      while (!result.done) {
-        console.log(result.value);
-        result = iterator.next();
+      // DJB
+      function DJBHash(str) {
+        var hash = 5381;
+        var len = str.length,
+          i = 0;
+        while (len--) {
+          hash = (hash << 5) + hash + str.charCodeAt(i++); /* times 33 */
+        }
+        hash &= ~(1 << 31); /* strip the highest bit */
+        return hash;
       }
-      console.log(map);
+      console.log(DJBHash("adsd"));
+      console.log(DJBHash("asdb"));
+      //JS
+      function JSHash(str) {
+        var hash = 1315423911;
+        for (var i = 0; i < str.length; i++) {
+          hash ^= (hash << 5) + str.charCodeAt(i) + (hash >> 2);
+        }
+        return hash;
+      }
+      console.log(JSHash("adsd"));
+      // //PJW
+      function PJWHash(str) {
+        var BitsInUnsignedInt = 4 * 8;
+        var ThreeQuarters = (BitsInUnsignedInt * 3) / 4;
+        var OneEighth = BitsInUnsignedInt / 8;
+        var HighBits = 0xffffffff << (BitsInUnsignedInt - OneEighth);
+        var hash = 0;
+        var test = 0;
+        for (var i = 0; i < str.length; i++) {
+          hash = (hash << OneEighth) + str.charCodeAt(i);
+          if ((test = hash & HighBits) != 0) {
+            hash = (hash ^ (test >> ThreeQuarters)) & ~HighBits;
+          }
+        }
+        return hash;
+      }
+      console.log(PJWHash("adsd"));
     </script>
   </body>
 </html>
