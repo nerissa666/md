@@ -83,6 +83,157 @@
             }
             return array;
           }
+          has(data, root = this.root, direction = "left") {
+            if (!root) {
+              return false;
+            }
+            if (root.data === data) {
+              return true;
+            }
+            data < root.data ? (direction = "left") : (direction = "right");
+            return this.has(data, root[direction]);
+          }
+          getMax(root = this.root) {
+            return this.inOrderTraverseNode(root)[
+              this.inOrderTraverseNode(root).length - 1
+            ];
+          }
+          getMin(root = this.root) {
+            return this.inOrderTraverseNode(root)[0];
+          }
+          delete(data) {
+            // this.root = this.deleteRecursionContrast(data, this.root); // 1. 对比删除
+            // this.root = this.deleteRecursionReplaceLeft(data, this.root); // 2. 替换删除
+            // this.root = this.deleteRecursion(data, this.root); // 3. 替换最左最右子节点删除
+            this.root = this.deleteRecursionReplaceData(data, this.root); // 4. 替换最最大最小节点删除
+          }
+          /**
+           * 1、对比删除，两一个节点的整颗树移动 // deleteRecursion
+           * 2、把左节点或者右边节点作为root，将另一个节点作为root的子节点
+           * 3、找到右节点的最左叶子节点，将它作为root的data，并将其本身删除
+           * 4、找到左节点的最右叶子节点，将它作为root的data，并将其本身删除
+           */
+          deleteRecursion(data, root, direction) {
+            if (!root) return null;
+            if (root.data !== data) {
+              direction = data < root.data ? "left" : "right";
+              root[direction] = this.deleteRecursion(data, root[direction]);
+              return root;
+            }
+            if (!root.left && !root.right) {
+              return null;
+            }
+            let max = this.getMax(root.left),
+              min = this.getMin(root.right);
+            if (root.left) {
+              root.data = max;
+              root.left = this.deleteRecursion(max, root.left);
+              return root;
+            } else {
+              root.data = min;
+              root.right = this.deleteRecursion(min, root.right);
+              return root;
+            }
+          }
+
+          deleteRecursionReplaceData(data, root, direction) {
+            // 4
+            if (!root) return null;
+            if (root.data !== data) {
+              direction = data < root.data ? "left" : "right";
+              root[direction] = this.deleteRecursion(data, root[direction]);
+              return root;
+            }
+            if (!root.left && !root.right) {
+              return null;
+            }
+            if (root.left && root.right) {
+              let right = root.right;
+              while (right.left) {
+                right = right.left;
+              }
+              root.data = right.data;
+              root.right = this.deleteRecursion(root.data, root.right);
+              return root;
+            }
+            if (root.right) {
+              return root.right;
+            } else {
+              return root.left;
+            }
+          }
+          deleteRecursionReplaceLeft(data, root, direction) {
+            if (!root) return null;
+            if (root.data !== data) {
+              direction = data < root.data ? "left" : "right";
+              root[direction] = this.deleteRecursionReplaceLeft(
+                data,
+                root[direction],
+                direction
+              );
+              return root;
+            }
+            if (!root.left && !root.right) {
+              return null;
+            }
+            if (root.left && root.right) {
+              let right = root.right;
+              while (right.left) {
+                right = right.left;
+              }
+              right.left = root.left;
+              return root.right;
+            }
+            if (root.right) {
+              return root.ritht;
+            } else {
+              return root.left;
+            }
+          }
+          deleteRecursionContrast(data, root, direction) {
+            // 对比删除方法
+            if (!root) return null;
+            if (root.data !== data) {
+              direction = data < root.data ? "left" : "right";
+              root[direction] = this.deleteRecursionContrast(
+                data,
+                root[direction]
+              );
+              return root;
+            }
+            if (!root.left && !root.right) {
+              // 无子节点
+              return null;
+            } else if (root.left && !root.right) {
+              // 有左节点
+              return root.left;
+            } else if (!root.left && root.right) {
+              // 有右节点
+              return root.right;
+            } else {
+              // 有左右节点
+              /**
+               * 左右节点都有的话应该做什么？
+               * 我想做的是对比左右节点，将最先找到的那个空节点作为另一个节点的root
+               */
+              let right = root.right,
+                left = root.left;
+              while (right.left && left.right) {
+                // 看谁的深度最浅 叶子节点先为null
+                right = right.left;
+                left = left.right;
+              }
+              if (right.left) {
+                // 左节点的右边节点先被找到，要把左节点作为root，左节点作为左节点最左的叶子节点
+                left.right = root.right;
+                return root.left;
+              } else {
+                // 右节点的左边节点先被找到，要把右节点作为root，右节点作为右节点最右的叶子节点
+                right.left = root.left;
+                return root.right;
+              }
+            }
+          }
         };
       })();
       let bst = new BST();
@@ -92,27 +243,17 @@
       bst.insert(5);
       bst.insert(9);
       bst.insert("a");
-      console.log("a".charCodeAt(0));
-      console.log("5".charCodeAt(0)); //ASCII number类型没有 ASCII 码
-      console.log(bst.inOrderTraverseNode());
-      console.log(bst.afterOrderTraverseNode());
-      console.log(bst.preOrderTraverseNode());
+      // console.log("a".charCodeAt(0));
+      // console.log("5".charCodeAt(0)); //ASCII number类型没有 ASCII 码
+      // console.log(bst.inOrderTraverseNode());
+      // console.log(bst.afterOrderTraverseNode());
+      // console.log(bst.preOrderTraverseNode());
+      // console.log(bst.has("a"));
+      // bst.delete("a");
+      bst.delete(20);
+      bst.delete(10);
+      bst.delete(40);
       console.log(bst);
-      /**
-       * 1.二叉树
-        已知：
-        前序遍历：GDAFEMHZ
-        中序遍历：ADEFGHMZ
-        求：
-        后续遍历
-        2.二叉树
-        已知：
-        前序遍历：DABEGFC
-        后序遍历：GFEBCAD
-        求：
-        中序遍历
-       * 
-      */
     </script>
   </body>
 </html>
