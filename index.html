@@ -18,6 +18,30 @@
             this.right = null;
           }
         }
+        function insertNode(root, node) {
+          // insert(100), insert(90), insert(80)
+          //判断根是否存在
+          if (!root) return node;
+          //判断插入在左侧还是右侧
+          if (root.data > node.data) {
+            //左侧
+            root.left;
+            finsertNode(root.left, node);
+            //深度检测
+          } else {
+            //右側
+            root.right = insertNode(root.right, node);
+          }
+          //深度检测
+          console.log(root, nodeDeep(root));
+          return root;
+        }
+        //计算节点深度
+        function nodeDeep(node) {
+          if (!node) return 0;
+          //返回 左子树深度 和 右子树深度 的最大值
+          return Math.max(nodeDeep(node.left), nodeDeep(node.right)) + 1;
+        }
         return class {
           constructor() {
             this.root = null;
@@ -254,6 +278,7 @@
       bst.delete(10);
       bst.delete(40);
       console.log(bst);
+      //（根，新节点）
     </script>
   </body>
 </html>
