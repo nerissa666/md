@@ -30,17 +30,69 @@
             let direction = data < root.data ? "left" : "right";
             // parentRoot = data < root.data ? "right" : "left";
             root[direction] = this.insertNode(root[direction], data, root);
-            if (
-              Math.abs(this.deepth(root.left) - this.deepth(root.right)) > 1
-            ) {
-              /**
-               * 如果大于1，则需要旋转，有没有可能超出2呢，按照打印来看是有的，是不是因为插入的时候虽然做了判断，但是未做调整的原因
-               *
-               */
-              console.log(root, "深度差>1");
-              // root = this.rotate(root, direction, data, parentRoot);
-              // 二叉平衡树
-              root = this.rotateSelf(root, data);
+            root = this.rotateSelf(root, data);
+
+            return root;
+          }
+          inOrderTraverseNode(root = this.root, array = []) {
+            if (root) {
+              this.inOrderTraverseNode(root.left, array);
+              array.push(root.data);
+              this.inOrderTraverseNode(root.right, array);
+            }
+            return array;
+          }
+          getMax(root = this.root) {
+            return this.inOrderTraverseNode(root)[
+              this.inOrderTraverseNode(root).length - 1
+            ];
+          }
+          getMin(root = this.root) {
+            return this.inOrderTraverseNode(root)[0];
+          }
+          delete(data) {
+            this.root = this.deleteRecursion(this.root, data);
+          }
+          deleteRecursion(root, data, direction) {
+            if (!root) {
+              return root;
+            }
+            if (data === root.data) {
+              console.log(root);
+              if (!root.left && !root.right) {
+                return null;
+              }
+              if (root?.left && !root.right) {
+                root = root.left;
+              }
+              if (root?.right && !root.left) {
+                root = root.right;
+              }
+              if (root?.left && root?.right) {
+                //被删的节点，既有左子树又有右子树
+                if (this.deepth(root.left) > this.deepth(root.right)) {
+                  //选用左边最大值来代替
+                  let leftMax = this.getMax(root.left);
+                  root.left = this.deleteRecursion(root.left, leftMax);
+                  root.data = leftMax;
+                } else {
+                  //先用右边最小值来代替
+                  let rightMin = this.getMin(root.right);
+                  root.right = this.deleteRecursion(root.right, rightMin);
+                  root.data = rightMin;
+                }
+                return root;
+              }
+            } else {
+              direction = data < root.data ? "left" : "right";
+              root[direction] = this.deleteRecursion(root[direction], data);
+            }
+            let leftDeep = this.deepth(root.left),
+              rightDeep = this.deepth(root.right);
+            if (leftDeep > rightDeep) {
+              root = this.rotateSelf(root, this.getMax(root.left));
+            } else {
+              root = this.rotateSelf(root, this.getMin(root.right));
             }
             return root;
           }
@@ -50,15 +102,13 @@
               Math.max(this.deepth(root.left), this.deepth(root.right)) + 1
             );
           }
-          rotate(root, direction, data, parentRoot) {
-            console.log(parentRoot, root, direction, data);
+          rotate(root, direction, data) {
             // root如果两个节点都存在，那就用rotateSelf不能调整，如果有一个不存在，用self调整后返回
             if (!parentRoot || !root.left || !root.right) {
               // 先就当他是根节点不平衡，那就用self调整
               /**
                * 没有父节点说明他是根节点对吗？目前还不能换根，所以先不考虑，所以能进来深度的，根节点也可能不平衡
                * 进来一个节点导致根节点不平衡，说明这边多了，先用 LL LR RR RL 调整，再用细的调整，那么调整完
-               * 就一定有了吗，还是怎么说
                */
               root = this.rotateSelf(root, direction, data);
               return root;
@@ -66,36 +116,36 @@
 
             // 把自己作为根节点
             /**
-             *  temp = 117
-                temp.right=root.right
-                root.right=temp.left
-                temp.left=root
-                parentRoot.left = temp
-                return parentRoot
-             * 
-            */
+                   *  temp = 117
+                      temp.right=root.right
+                      root.right=temp.left
+                      temp.left=root
+                      parentRoot.left = temp
+                      return parentRoot
+                   *
+                  */
             // if (RLL || RLR || RRL) {
             //   console.log("把自己作为新的根节点");
             // }
             // 父节点的父节点作为根节点
             /**
-             *  temp=80
-                root.left=temp.right
-                temp.right=root
-                parentRoot.left=temp
-                return parentRoot
-             */
+                   *  temp=80
+                      root.left=temp.right
+                      temp.right=root
+                      parentRoot.left=temp
+                      return parentRoot
+                   */
             // if (LLL || LLR) {
             //   console.log("父节点的父节点作为新的根节点");
             // }
             /**
-             * RRR 父节点的逻辑
-             *  temp=160
-                root.right=temp.left
-                temp.left=root
-                parentRoot.right=temp
-                return parentRoot
-             */
+                   * RRR 父节点的逻辑
+                   *  temp=160
+                      root.right=temp.left
+                      temp.left=root
+                      parentRoot.right=temp
+                      return parentRoot
+                   */
             if (
               parentRoot.right === root &&
               direction === "right" &&
@@ -158,20 +208,41 @@
             // }
             return root;
           }
-          LL(root, data) {
+          LL(root) {
+            console.log(root);
             let temp = root.left; // 选择中间树作为根节点
             root.left = temp.right;
             temp.right = root; //
             return temp;
           }
-          RR(root, data) {
+          RR(root) {
             // 当前direction说明是即将存在右还是做，preDirection说明当前节点的上一层是root的左还是右
             let temp = root.right; // 选中的新的根节点，rr root.right就是 这三个数字的中间树，也是新节点的父节点
             root.right = temp.left; // 先断开和root连接 这里还需要处理原来temp的左节点，放到原来根节点的右节点，因为原来根节点的右节点是temp现在空出来了
             temp.left = root; // 把原来的根节点存到中间树的左节点，这样新节点进来的时候，data > root.data,就会存到右节点
             return temp;
           }
+          RL(root) {
+            root.right = this.LL(root.right, data);
+            return this.RR(root, data);
+          }
+          LR(root) {
+            root.left = this.RR(root.left, data);
+            return this.LL(root, data);
+          }
           rotateSelf(root, data) {
+            if (
+              Math.abs(this.deepth(root.left) - this.deepth(root.right)) < 2
+            ) {
+              /**
+               * 如果大于1，则需要旋转，有没有可能超出2呢，按照打印来看是有的，是不是因为插入的时候虽然做了判断，但是未做调整的原因
+               *
+               */
+              console.log(root, "深度差<2");
+              // 如果小于等于2，就不需要调整，直接return自己，这么做是为了复用
+              return root;
+            }
+            console.log(root, "深度差>2");
             // 无法向上调节
             // LL RR LR RL
             // LL root.left
@@ -185,14 +256,13 @@
               return this.RR(root, data);
             }
             if (data < root.right?.data) {
+              console.log(data);
               console.log("RL");
-              root.right = this.LL(root.right, data);
-              return this.RR(root, data);
+              return this.RR(root);
             }
             if (data >= root.left?.data) {
               console.log("LR");
-              root.left = this.RR(root.left, data);
-              return this.LL(root, data);
+              return this.LR(root);
             }
             return root;
           }
@@ -208,7 +278,9 @@
       avl.insert(18);
       avl.insert(17);
       avl.insert(16);
-      avl.insert(40);
+      avl.delete(40);
+      avl.delete(15);
+      avl.delete(20);
       console.log(avl);
     </script>
   </body>
