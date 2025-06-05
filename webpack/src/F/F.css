@@ -1,0 +1,9 @@
+@font-face {
+  font-family: "Pacifico";
+  src: url("./Pacifico.ttf");
+}
+
+.font-1 {
+  font-family: "Pacifico";
+  color: blue;
+}

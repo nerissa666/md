@@ -1,0 +1,14 @@
+.dachui {
+  width: 200px;
+  height: 100px;
+  background-image: url(./2.jpg);
+}
+.font {
+  font-family: "Pacifico";
+  color: red;
+}
+
+@font-face {
+  font-family: "Pacifico";
+  src: url(./Pacifico.ttf);
+}
